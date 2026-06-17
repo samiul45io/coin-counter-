@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Counter Pro | Yasmin Almeida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0B1120;
+            --bg-card: #1E293B;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --accent: #34D399;
+            --text-light: #F8FAFC;
+            --text-muted: #94A3B8;
+            --input-bg: #0F172A;
+            --border: #334155;
+            --danger: #EF4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* App Wrapper */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        /* Header & Sidebar Toggle */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .menu-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 12px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .menu-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Display Area */
+        .display-card {
+            background: var(--input-bg);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 2px solid transparent;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .display-card.active-glow {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .coin-value {
+            font-size: clamp(3rem, 10vw, 4.5rem); /* Responsive text size */
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1.1;
+            margin-bottom: 5px;
+            word-break: break-word; /* Prevents overflow */
+        }
+
+        .tk-value {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .tk-value span {
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        /* Input Section */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-box {
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            color: #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .input-box::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .input-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .add-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .add-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .add-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Progress & Motivation */
+        .progress-bg {
+            height: 10px;
+            background: var(--input-bg);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .motivation-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .developer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .developer span {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Sidebar / History Panel */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0; left: -100%; width: 300px; height: 100%;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            z-index: 100;
+            padding: 25px;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 20px 0 40px rgba(0,0,0,0.5);
+        }
+
+        .sidebar.open { left: 0; }
+        .sidebar-overlay.open { opacity: 1; visibility: visible; }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.5rem; cursor: pointer;
+        }
+
+        .btn-new-session {
+            background: transparent;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-new-session:hover { background: rgba(16, 185, 129, 0.1); }
+
+        .session-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .session-item {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-item:hover { border-color: var(--text-muted); }
+        .session-item.active { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
+
+        .session-info h4 { font-size: 0.9rem; margin-bottom: 3px; color: #fff; }
+        .session-info p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Floating Particle Animation */
+        @keyframes floatUp {
+            0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -150px) scale(1.5); opacity: 0; }
+        }
+        .floating-text {
+            position: absolute;
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 2rem;
+            left: 50%;
+            top: 40%;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar History Menu -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>হিস্ট্রি</h2>
+            <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        </div>
+        <button class="btn-new-session" onclick="createNewSession()">+ নতুন শুরু করুন</button>
+        <div class="session-list" id="sessionList">
+            <!-- Sessions will load here dynamically -->
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container">
+        <div class="header">
+            <h1>Coin Counter</h1>
+            <button class="menu-btn" onclick="toggleSidebar()">
+                ☰ Menu
+            </button>
+        </div>
+
+        <div class="display-card" id="displayCard">
+            <div class="coin-value" id="coinDisplay">0</div>
+            <div class="tk-value">মোট আয়: ৳ <span id="tkDisplay">0.00</span></div>
+        </div>
+
+        <div class="progress-bg">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="input-group">
+            <input type="number" id="coinInput" class="input-box" placeholder="কয়েন লিখুন (যেমন: 500)" inputmode="numeric">
+            <button class="add-btn" onclick="addCoins()">যোগ করুন</button>
+        </div>
+
+        <div class="motivation-box" id="motivationText">
+            আপনার আজকের সেশন শুরু করুন!
+        </div>
+
+        <div class="developer">Developed by <span>Yasmin Almeida</span></div>
+    </div>
+
+    <script>
+        // Constants & Data
+        const RATE = 7.2;
+        const TARGET = 50000;
+        let appData = JSON.parse(localStorage.getItem('yasmin_pro_data')) || { activeId: null, sessions: [] };
+
+        // Elements
+        const coinDisplay = document.getElementById('coinDisplay');
+        const tkDisplay = document.getElementById('tkDisplay');
+        const coinInput = document.getElementById('coinInput');
+        const progressBar = document.getElementById('progressBar');
+        const motivationText = document.getElementById('motivationText');
+        const sessionList = document.getElementById('sessionList');
+
+        // Number Formatting (k format)
+        function formatK(num) {
+            if (num >= 1000) {
+                let kVal = num / 1000;
+                return (Number.isInteger(kVal) ? kVal : kVal.toFixed(1)) + 'k';
+            }
+            return num.toString();
+        }
+
+        // Get Current Date as string (e.g., 17 June 2026)
+        function getFormattedDate() {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date().toLocaleDateString('en-GB', options);
+        }
+
+        // Initialize App
+        function initApp() {
+            if (appData.sessions.length === 0 || !appData.activeId) {
+                createNewSession(false);
+            } else {
+                updateUI();
+                renderSessions();
+            }
+        }
+
+        // Create New Session
+        function createNewSession(updateRender = true) {
+            const dateName = getFormattedDate();
+            const newId = Date.now();
+            
+            // Count if multiple sessions exist today
+            const todayCount = appData.sessions.filter(s => s.name.includes(dateName)).length;
+            const finalName = todayCount > 0 ? `${dateName} (${todayCount + 1})` : dateName;
+
+            const newSession = { id: newId, name: finalName, coins: 0 };
+            appData.sessions.unshift(newSession); // Add to top
+            appData.activeId = newId;
+            
+            saveData();
+            if (updateRender) {
+                toggleSidebar(); // Close sidebar automatically
+                animateNumberChange(0, 0); // Reset animation
+                updateUI();
+                renderSessions();
+            }
+        }
+
+        // Save to LocalStorage
+        function saveData() {
+            localStorage.setItem('yasmin_pro_data', JSON.stringify(appData));
+        }
+
+        // Get Active Session Object
+        function getActiveSession() {
+            return appData.sessions.find(s => s.id === appData.activeId);
+        }
+
+        // Switch Session
+        function switchSession(id) {
+            appData.activeId = id;
+            saveData();
+            updateUI();
+            renderSessions();
+            toggleSidebar();
+        }
+
+        // Render Sidebar List
+        function renderSessions() {
+            sessionList.innerHTML = '';
+            appData.sessions.forEach(session => {
+                const isActive = session.id === appData.activeId;
+                const div = document.createElement('div');
+                div.className = `session-item ${isActive ? 'active' : ''}`;
+                div.onclick = () => switchSession(session.id);
+                div.innerHTML = `
+                    <div class="session-info">
+                        <h4>${session.name}</h4>
+                        <p>${formatK(session.coins)} কয়েন (৳${((session.coins/1000)*RATE).toFixed(2)})</p>
+                    </div>
+                `;
+                sessionList.appendChild(div);
+            });
+        }
+
+        // Update UI based on active session
+        function updateUI() {
+            const session = getActiveSession();
+            const coins = session.coins;
+
+            coinDisplay.innerText = formatK(coins);
+            tkDisplay.innerText = ((coins / 1000) * RATE).toFixed(2);
+            
+            let progress = Math.min((coins / TARGET) * 100, 100);
+            progressBar.style.width = progress + '%';
+
+            if (coins >= TARGET) {
+                motivationText.innerHTML = "🏆 অসাধারণ! আপনি প্রতিদিনের টার্গেট পূরণ করেছেন।";
+                motivationText.style.borderLeftColor = "var(--accent)";
+            } else if (coins >= 25000) {
+                motivationText.innerHTML = "🔥 দারুন গতি! টার্গেটের অর্ধেক পূর্ণ করে ফেলেছেন।";
+                motivationText.style.borderLeftColor = "#F59E0B";
+            } else if (coins > 0) {
+                motivationText.innerHTML = "এগিয়ে যান! লক্ষ্য পূরণের দিকে এগিয়ে চলেছেন।";
+                motivationText.style.borderLeftColor = "var(--primary)";
+            } else {
+                motivationText.innerHTML = "নতুন সেশন শুরু হলো! আপনার প্রথম কয়েন যোগ করুন।";
+                motivationText.style.borderLeftColor = "var(--border)";
+            }
+        }
+
+        // Animate Number Count-Up (Smoothly)
+        function animateNumberChange(start, end) {
+            let duration = 800; // ms
+            let startTime = null;
+
+            function animationScroll(currentTime) {
+                if (!startTime) startTime = currentTime;
+                let timeElapsed = currentTime - startTime;
+                let progress = Math.min(timeElapsed / duration, 1);
+                
+                // Ease out cubic
+                let easeProgress = 1 - Math.pow(1 - progress, 3);
+                let currentVal = Math.floor(start + (end - start) * easeProgress);
+                
+                coinDisplay.innerText = formatK(currentVal);
+                tkDisplay.innerText = ((currentVal / 1000) * RATE).toFixed(2);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animationScroll);
+                } else {
+                    updateUI(); // Final precise update
+                }
+            }
+            requestAnimationFrame(animationScroll);
+        }
+
+        // Add Coins Function
+        function addCoins() {
+            const val = parseInt(coinInput.value);
+            if (isNaN(val) || val <= 0) return;
+
+            const session = getActiveSession();
+            const oldCoins = session.coins;
+            session.coins += val;
+            
+            saveData();
+            renderSessions();
+            coinInput.value = '';
+
+            // Animations
+            createFloatingText(val);
+            flashDisplayCard();
+            animateNumberChange(oldCoins, session.coins);
+        }
+
+        // Viral Floating Animation
+        function createFloatingText(amount) {
+            const floater = document.createElement('div');
+            floater.className = 'floating-text';
+            floater.innerText = '+' + formatK(amount);
+            document.querySelector('.app-container').appendChild(floater);
+            setTimeout(() => floater.remove(), 1000);
+        }
+
+        // Flash Card Effect
+        function flashDisplayCard() {
+            const card = document.getElementById('displayCard');
+            card.classList.add('active-glow');
+            setTimeout(() => card.classList.remove('active-glow'), 300);
+        }
+
+        // Enter Key Support
+        coinInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addCoins();
+        });
+
+        // Sidebar Controls
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        // Run
+        initApp();
+    </script>
+</body>
+</html>
