@@ -1,7 +1,0 @@
-{
-  "name": "instagram-checker-coin-elite",
-  "version": "2.0.0",
-  "private": true,
-  "description": "Instagram Checker by Yasmin Almeida with the existing Coin Elite tools preserved.",
-  "engines": { "node": ">=20" }
-}
