@@ -1,0 +1,13 @@
+{
+  "name": "instagram-account-checker-yasmin",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Smart sequential Instagram account checker by Yasmin Almeida with remembered PIN 3939, no fixed username limit, and Coin Elite tools preserved.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check api/health.js && node --check api/check-instagram.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
